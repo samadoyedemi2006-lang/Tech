@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback} from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { dataStore, type Announcement } from "@/lib/dataStore";
+import { api } from "@/lib/api";
 
 export default function ManageAnnouncements() {
   const [items, setItems] = useState<Announcement[]>([]);
@@ -13,13 +14,31 @@ export default function ManageAnnouncements() {
   const [form, setForm] = useState({ title: "", content: "", priority: "medium" });
   const { toast } = useToast();
 
-  useEffect(() => { setItems(dataStore.getAnnouncements()); }, []);
+   const load = useCallback(async () => {
+      try {
+        const data = await api.getAnnouncements();
+        setItems(data);
+      } catch (error) {
+        toast({ title: "Failed to load announcements", variant: "destructive" });
+      }
+    }, []);
+
+    useEffect(
+    () => { load(); }, 
+   [load]);
 
   const persist = (data: Announcement[]) => { setItems(data); dataStore.setAnnouncements(data); };
-
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.title) return;
-    persist([...items, { ...form, id: Date.now().toString(), date: new Date().toISOString().split("T")[0] }]);
+
+    const newAnnouncement = { ...form, id: Date.now().toString(), date: new Date().toISOString().split("T")[0] };
+    try {
+      await api.addAnnouncement(newAnnouncement);
+    } catch (error) {
+      toast({ title: "Failed to add announcement", variant: "destructive" });
+      return;
+    }
+    persist([...items, newAnnouncement]);
     setForm({ title: "", content: "", priority: "medium" });
     setShowForm(false);
     toast({ title: "Published", description: "All users can now see this announcement" });
