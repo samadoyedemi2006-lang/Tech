@@ -1,4 +1,4 @@
-const API_BASE = "https://tech-backend-uyn5.onrender.com/api";
+const API_BASE = "http://localhost:5000/api";
 
 function getToken(): string | null {
   return localStorage.getItem("token");
@@ -43,13 +43,11 @@ export const api = {
 
   // CBT
   getCBTQuestions: (course?: string) =>
-    request<any[]>(`/cbt/questions${course ? `?course=${course}` : ""}`),
+    request<any[]>(`/cbt${course ? `?course=${course}` : ""}`),
   addCBTQuestion: (data: any) =>
-    request("/cbt/questions", { method: "POST", body: JSON.stringify(data) }),
-  updateCBTQuestion: (id: string, data: any) =>
-    request(`/cbt/questions/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    request("/cbt", { method: "POST", body: JSON.stringify(data) }),
   deleteCBTQuestion: (id: string) =>
-    request(`/cbt/questions/${id}`, { method: "DELETE" }),
+    request(`/cbt/${id}`, { method: "DELETE" }),
 
   // Tutorials
   getTutorials: () => request<any[]>("/tutorials"),
