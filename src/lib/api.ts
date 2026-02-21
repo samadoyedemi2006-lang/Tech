@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://tech-backend-uyn5.onrender.com/api";
 
 function getToken(): string | null {
   return localStorage.getItem("token");
