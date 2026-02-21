@@ -1,146 +1,52 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Trash2, Plus, Upload, FileText } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { dataStore, type PastQuestion } from "@/lib/dataStore";
+import { Trash2, Plus } from "lucide-react";
+import { api } from "@/lib/api";
 
 export default function ManagePastQuestions() {
-  const [items, setItems] = useState<PastQuestion[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", course: "", type: "PDF" });
-  const [file, setFile] = useState<File | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
+  const [items, setItems] = useState<any[]>([]);
+  const [form, setForm] = useState({ title: "", course: "", type: "PDF", url: "" });
+  const [show, setShow] = useState(false);
 
-  useEffect(() => { setItems(dataStore.getPastQuestions()); }, []);
+  const load = async () => setItems(await api.getPastQuestions());
+  useEffect(() => { load(); }, []);
 
-  const persist = (data: PastQuestion[]) => { setItems(data); dataStore.setPastQuestions(data); };
+  const add = async () => {
+    await api.addPastQuestion(form);
+    setForm({ title: "", course: "", type: "PDF", url: "" });
+    setShow(false);
+    load();
+  };
 
-  const handleAdd = () => {
-    if (!form.title || !form.course) {
-      toast({ title: "Error", description: "Title and course are required", variant: "destructive" });
-      return;
-    }
-
-    let fileUrl = "#";
-    let fileName: string | undefined;
-
-    if (file) {
-      // Create a local object URL so the file is downloadable in the preview
-      fileUrl = URL.createObjectURL(file);
-      fileName = file.name;
-    }
-
-    persist([
-      ...items,
-      { ...form, id: Date.now().toString(), url: fileUrl, fileName },
-    ]);
-    setForm({ title: "", course: "", type: "PDF" });
-    setFile(null);
-    if (fileRef.current) fileRef.current.value = "";
-    setShowForm(false);
-    toast({ title: "Uploaded", description: "Past question saved successfully" });
+  const del = async (id: string) => {
+    await api.deletePastQuestion(id);
+    load();
   };
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Manage Past Questions</h1>
-        <Button size="sm" onClick={() => setShowForm(!showForm)}>
-          <Plus className="h-4 w-4 mr-1" /> Upload
-        </Button>
-      </div>
-
-      {showForm && (
-        <div className="bg-card border rounded-xl p-5 mb-6 card-shadow space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <Label>Title *</Label>
-              <Input
-                placeholder="e.g. COM 111 - 2024 Exam"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label>Course *</Label>
-              <Input
-                placeholder="e.g. COM 111"
-                value={form.course}
-                onChange={(e) => setForm({ ...form, course: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label>Type</Label>
-              <Input
-                value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label>PDF File</Label>
-            <div className="mt-1 flex items-center gap-3">
-              <label className="flex items-center gap-2 px-4 py-2 border border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition-colors text-sm">
-                <Upload className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">
-                  {file ? file.name : "Choose PDF file"}
-                </span>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept=".pdf,application/pdf"
-                  className="hidden"
-                  onChange={(e) => setFile(e.target.files?.[0] || null)}
-                />
-              </label>
-              {file && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => { setFile(null); if (fileRef.current) fileRef.current.value = ""; }}
-                  className="text-destructive text-xs"
-                >
-                  Remove
-                </Button>
-              )}
-            </div>
-          </div>
-
-          <Button onClick={handleAdd}>Save Past Question</Button>
+      <Button onClick={() => setShow(!show)}><Plus /> Upload</Button>
+      {show && (
+        <div className="space-y-2 mt-4">
+          <Input placeholder="Title" value={form.title}
+            onChange={e => setForm({ ...form, title: e.target.value })} />
+          <Input placeholder="Course" value={form.course}
+            onChange={e => setForm({ ...form, course: e.target.value })} />
+          <Input placeholder="PDF URL" value={form.url}
+            onChange={e => setForm({ ...form, url: e.target.value })} />
+          <Button onClick={add}>Save</Button>
         </div>
       )}
 
-      <div className="space-y-3">
-        {items.map((t) => (
-          <div key={t.id} className="bg-card border rounded-xl p-4 card-shadow flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-primary shrink-0" />
-              <div>
-                <h3 className="font-medium">{t.title}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {t.course} · {t.type}
-                  {t.fileName && <span className="ml-1">· 📎 {t.fileName}</span>}
-                </p>
-              </div>
-            </div>
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => { persist(items.filter((i) => i.id !== t.id)); toast({ title: "Deleted" }); }}
-              className="text-destructive"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
-        {items.length === 0 && (
-          <p className="text-muted-foreground text-center py-8">No past questions uploaded yet.</p>
-        )}
-      </div>
+      {items.map(p => (
+        <div key={p._id} className="border p-3 flex justify-between">
+          <span>{p.title}</span>
+          <Button size="icon" variant="ghost" onClick={() => del(p._id)}>
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
+      ))}
     </div>
   );
 }

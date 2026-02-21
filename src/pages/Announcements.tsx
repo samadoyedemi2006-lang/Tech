@@ -1,37 +1,41 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Megaphone } from "lucide-react";
-import { dataStore, type Announcement } from "@/lib/dataStore";
+import { api } from "@/lib/api";
 
 export default function Announcements() {
-  const [items, setItems] = useState<Announcement[]>([]);
-
-  const reload = useCallback(() => setItems(dataStore.getAnnouncements()), []);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    reload();
-    window.addEventListener("datastore-update", reload);
-    return () => window.removeEventListener("datastore-update", reload);
-  }, [reload]);
+    api.getAnnouncements()
+      .then(setItems)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <p className="text-center py-10">Loading…</p>;
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-2">Announcements</h1>
       <p className="text-muted-foreground mb-6">Stay updated with the latest news</p>
 
-      {items.length === 0 && <p className="text-muted-foreground text-center py-12">No announcements yet.</p>}
+      {items.length === 0 && (
+        <p className="text-muted-foreground text-center py-12">No announcements yet.</p>
+      )}
 
       <div className="space-y-4">
         {items.map((a) => (
-          <div key={a.id} className="bg-card border rounded-xl p-5 card-shadow">
-            <div className="flex items-start gap-3">
-              <Megaphone className={`h-5 w-5 mt-0.5 shrink-0 ${a.priority === "high" ? "text-destructive" : a.priority === "medium" ? "text-warning" : "text-primary"}`} />
+          <div key={a._id} className="bg-card border rounded-xl p-5 card-shadow">
+            <div className="flex gap-3">
+              <Megaphone className="h-5 w-5 text-primary mt-1" />
               <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold">{a.title}</h3>
-                  {a.priority === "high" && <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-full">Important</span>}
-                </div>
+                <h3 className="font-semibold">{a.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{a.content}</p>
-                {a.date && <p className="text-xs text-muted-foreground mt-2">{new Date(a.date).toLocaleDateString()}</p>}
+                {a.createdAt && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {new Date(a.createdAt).toLocaleDateString()}
+                  </p>
+                )}
               </div>
             </div>
           </div>
