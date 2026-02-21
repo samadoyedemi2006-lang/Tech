@@ -1,0 +1,45 @@
+import { useState, useEffect, useCallback } from "react";
+import { FileText, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { dataStore, type PastQuestion } from "@/lib/dataStore";
+
+export default function PastQuestions() {
+  const [items, setItems] = useState<PastQuestion[]>([]);
+
+  const reload = useCallback(() => setItems(dataStore.getPastQuestions()), []);
+
+  useEffect(() => {
+    reload();
+    window.addEventListener("datastore-update", reload);
+    return () => window.removeEventListener("datastore-update", reload);
+  }, [reload]);
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-2">Past Questions</h1>
+      <p className="text-muted-foreground mb-6">Access previous exam questions for revision</p>
+
+      {items.length === 0 && <p className="text-muted-foreground text-center py-12">No past questions available yet.</p>}
+
+      <div className="space-y-3">
+        {items.map((pq) => (
+          <div key={pq.id} className="bg-card border rounded-xl p-4 card-shadow flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-primary shrink-0" />
+              <div>
+                <h3 className="font-medium">{pq.title}</h3>
+                <div className="flex gap-2 mt-1">
+                  <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded">{pq.course}</span>
+                  <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded">{pq.type}</span>
+                </div>
+              </div>
+            </div>
+            <Button size="sm" variant="outline" asChild>
+              <a href={pq.url || "#"}><Download className="h-4 w-4 mr-1" /> Download</a>
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
