@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, BookOpen, ClipboardCheck, Users, ArrowRight, Mail, MapPin, Code, Heart } from "lucide-react";
-import developerImg from "@/assets/developer-placeholder.jpg";
+import developerImg from "@/assets/developer.png";
 
 const features = [
   { icon: ClipboardCheck, title: "CBT Practice", desc: "Practice with course-based MCQs and get instant feedback", link: "/cbt" },
