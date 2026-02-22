@@ -104,7 +104,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Developer Section */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 max-w-3xl">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">Meet the Developer</h2>
