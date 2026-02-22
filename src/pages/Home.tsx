@@ -114,23 +114,23 @@ export default function Home() {
               className="w-36 h-36 rounded-full object-cover border-4 border-primary/20 shrink-0"
             />
             <div className="text-center md:text-left">
-              <h3 className="text-xl font-bold mb-1">Developer Name</h3>
-              <p className="text-primary font-medium text-sm mb-3">Full-Stack Developer & Student</p>
+              <h3 className="text-xl font-bold mb-1">Oyedemi Abdulsamad</h3>
+              <p className="text-primary font-medium text-sm mb-3">Backend Developer & Student</p>
               <p className="text-muted-foreground text-sm mb-4">
                 Passionate about building tools that make learning easier and more accessible. This platform is a personal project aimed at helping fellow students in the department.
               </p>
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2 justify-center md:justify-start text-muted-foreground">
                   <Mail className="h-4 w-4 text-primary" />
-                  <span>developer@example.com</span>
+                  <span>oyedemisamad@gmail.com</span>
                 </div>
                 <div className="flex items-center gap-2 justify-center md:justify-start text-muted-foreground">
                   <MapPin className="h-4 w-4 text-primary" />
-                  <span>Computer Science Department, University</span>
+                  <span>ND2 Computer Science Department, Federal polytechnic Ede </span>
                 </div>
                 <div className="flex items-center gap-2 justify-center md:justify-start text-muted-foreground">
                   <Code className="h-4 w-4 text-primary" />
-                  <span>React · Node.js · MongoDB · TypeScript</span>
+                  <span>React · Node.js · Express · MongoDB · JavaScript</span>
                 </div>
               </div>
             </div>
