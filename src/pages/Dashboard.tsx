@@ -1,20 +1,26 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Megaphone, Hash, GraduationCap } from "lucide-react";
+import { Megaphone, Hash, GraduationCap, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { dataStore, Announcement } from "@/lib/dataStore";
+import { api } from "@/lib/api";
+
+interface Announcement {
+  _id: string;
+  title: string;
+  content: string;
+  priority: string;
+  createdAt: string;
+}
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-
-  const loadAnnouncements = () => {
-    setAnnouncements(dataStore.getAnnouncements());
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadAnnouncements();
-    window.addEventListener("datastore-update", loadAnnouncements);
-    return () => window.removeEventListener("datastore-update", loadAnnouncements);
+    api.getAnnouncements()
+      .then((data) => setAnnouncements(data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const priorityColor: Record<string, string> = {
@@ -54,14 +60,16 @@ export default function Dashboard() {
         <h2 className="text-lg font-semibold">Latest Announcements</h2>
       </div>
 
-      {announcements.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+      ) : announcements.length === 0 ? (
         <div className="stat-card text-center py-8">
           <p className="text-muted-foreground">No announcements yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {announcements.map((a) => (
-            <div key={a.id} className="stat-card">
+            <div key={a._id} className="stat-card">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -71,8 +79,8 @@ export default function Dashboard() {
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground">{a.content}</p>
-                  {a.date && (
-                    <p className="text-xs text-muted-foreground mt-2">{new Date(a.date).toLocaleDateString()}</p>
+                  {a.createdAt && (
+                    <p className="text-xs text-muted-foreground mt-2">{new Date(a.createdAt).toLocaleDateString()}</p>
                   )}
                 </div>
               </div>

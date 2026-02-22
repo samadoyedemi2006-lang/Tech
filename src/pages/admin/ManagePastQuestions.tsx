@@ -36,7 +36,22 @@ export default function ManagePastQuestions() {
     }
     setSaving(true);
     try {
-      await api.addPastQuestion({ ...form, url: "#" });
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("course", form.course);
+      formData.append("type", form.type);
+      if (file) formData.append("file", file);
+
+      const token = localStorage.getItem("token");
+      const res = await fetch("https://tech-backend-uyn5.onrender.com/api/past-questions", {
+        method: "POST",
+        headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: formData,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: "Upload failed" }));
+        throw new Error(err.message);
+      }
       setForm({ title: "", course: "", type: "PDF" });
       setFile(null);
       if (fileRef.current) fileRef.current.value = "";

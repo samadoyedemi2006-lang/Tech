@@ -39,7 +39,9 @@ export default function PastQuestions() {
               </div>
             </div>
             <Button size="sm" variant="outline" asChild>
-              <a href={pq.url || "#"}><Download className="h-4 w-4 mr-1" /> Download</a>
+              <a href={pq.url && pq.url !== "#" ? `https://tech-backend-uyn5.onrender.com${pq.url}` : "#"} target="_blank" rel="noopener noreferrer" download>
+                <Download className="h-4 w-4 mr-1" /> Download
+              </a>
             </Button>
           </div>
         ))}

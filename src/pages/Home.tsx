@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, BookOpen, ClipboardCheck, Users, ArrowRight } from "lucide-react";
+import { GraduationCap, BookOpen, ClipboardCheck, Users, ArrowRight, Mail, MapPin, Code, Heart } from "lucide-react";
+import developerImg from "@/assets/developer-placeholder.jpg";
 
 const features = [
   { icon: ClipboardCheck, title: "CBT Practice", desc: "Practice with course-based MCQs and get instant feedback", link: "/cbt" },
@@ -49,6 +50,33 @@ export default function Home() {
         </div>
       </section>
 
+      {/* About */}
+      <section className="py-16 md:py-24 bg-muted/30">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">About This Platform</h2>
+          <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-10">
+            This platform was built to bridge the gap between students and learning resources. It provides a centralized hub where students can access CBT practice tests, past examination questions, tutorials, project ideas, and connect with their peers — all in one place.
+          </p>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-card border rounded-xl p-6 text-center card-shadow">
+              <ClipboardCheck className="h-8 w-8 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">Practice & Prepare</h3>
+              <p className="text-sm text-muted-foreground">Take CBT practice tests with instant feedback to prepare for your exams confidently.</p>
+            </div>
+            <div className="bg-card border rounded-xl p-6 text-center card-shadow">
+              <BookOpen className="h-8 w-8 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">Learn & Grow</h3>
+              <p className="text-sm text-muted-foreground">Access curated tutorials, past questions, and resources to enhance your knowledge.</p>
+            </div>
+            <div className="bg-card border rounded-xl p-6 text-center card-shadow">
+              <Users className="h-8 w-8 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">Connect & Collaborate</h3>
+              <p className="text-sm text-muted-foreground">Ask questions, share ideas, and stay updated with announcements from your community.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
@@ -61,6 +89,52 @@ export default function Home() {
                 <p className="text-muted-foreground text-sm">{f.desc}</p>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why I Built This */}
+      <section className="py-16 md:py-24 bg-muted/30">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
+          <Heart className="h-8 w-8 text-primary mx-auto mb-4" />
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">Why I Built This</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            As a student, I realized how scattered academic resources are — past questions shared on WhatsApp groups get lost, tutorials are hard to find, and there's no central place to ask questions or practice for exams. I built this platform to solve that problem and give every student in the department easy access to everything they need to succeed academically and grow technically.
+          </p>
+        </div>
+      </section>
+
+      {/* Developer Section */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">Meet the Developer</h2>
+          <div className="bg-card border rounded-2xl p-8 card-shadow flex flex-col md:flex-row items-center gap-8">
+            <img
+              src={developerImg}
+              alt="Developer"
+              className="w-36 h-36 rounded-full object-cover border-4 border-primary/20 shrink-0"
+            />
+            <div className="text-center md:text-left">
+              <h3 className="text-xl font-bold mb-1">Developer Name</h3>
+              <p className="text-primary font-medium text-sm mb-3">Full-Stack Developer & Student</p>
+              <p className="text-muted-foreground text-sm mb-4">
+                Passionate about building tools that make learning easier and more accessible. This platform is a personal project aimed at helping fellow students in the department.
+              </p>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2 justify-center md:justify-start text-muted-foreground">
+                  <Mail className="h-4 w-4 text-primary" />
+                  <span>developer@example.com</span>
+                </div>
+                <div className="flex items-center gap-2 justify-center md:justify-start text-muted-foreground">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span>Computer Science Department, University</span>
+                </div>
+                <div className="flex items-center gap-2 justify-center md:justify-start text-muted-foreground">
+                  <Code className="h-4 w-4 text-primary" />
+                  <span>React · Node.js · MongoDB · TypeScript</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
